@@ -1,0 +1,92 @@
+﻿<Window x:Class="WpfSimpleListBoxDrag.WinInteractor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:WpfSimpleListBoxDrag"
+        Title="Window Interactor" Height="300" Width="300">
+    <Window.Resources>
+        <!--Rajout-->
+        <!--DataTemplate pour Adorner-->
+        <DataTemplate x:Key="AdornerTemplate">
+            <Border BorderBrush="Gray"
+					BorderThickness="1"
+					Background="#5F000000"
+					SnapsToDevicePixels="True"
+					CornerRadius="15"
+					Width="130"
+					Height="30">
+                <TextBlock 
+                    Text="{Binding Path=FirstName, StringFormat=ToolTip for {0}}"
+					FontFamily="Times New Roman"
+					FontSize="13"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+					Foreground="White"/>
+            </Border>
+        </DataTemplate>
+
+
+        <!--Fin Rajout-->
+        <!--ObservableCollection Persons-->
+        <local:Persons x:Key="MyDataSource"></local:Persons>
+        <!--DataTemplate  du listbox-->
+        <DataTemplate 
+            x:Key="ItemTemplate"
+            DataType="{x:Type local:Person}">
+            <Border Background="Transparent"
+					BorderBrush="DarkGray"
+					BorderThickness="0,0,0,1"
+					Padding="5">
+                <StackPanel   Orientation="Horizontal" >
+                    <TextBlock
+                            Margin="20"
+                            HorizontalAlignment="Center"
+                            FontSize="18"
+                            Text="{Binding FirstName}"/>
+                    <TextBlock
+                            Margin="20"
+                            FontSize="18"
+                            HorizontalAlignment="Center"
+                            Text="{Binding ID}"/>
+                    <Image 
+                            Height="100"
+                            Width="100"
+                            Stretch="Uniform"
+                            Source="{Binding UriImage}"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+        <!--ItemContainerStyle qui fait le drag drop desire-->
+        <Style 
+            x:Key="itemcontainerstyle"
+            TargetType="{x:Type ListBoxItem}">
+            <Setter Property="ListBoxItem.IsSelected" Value="true"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="AllowDrop" Value="true"/>
+            <EventSetter
+                Event="ListBoxItem.PreviewMouseLeftButtonDown"  
+                Handler="s_PreviewMouseLeftButtonDown" />
+            <EventSetter 
+                Event="ListBoxItem.Drop" 
+                Handler="listbox1_Drop"/>
+            <Style.Triggers>
+                <Trigger Property="ListBoxItem.IsSelected" Value="true">
+                    <Setter Property="ListBoxItem.Foreground" Value="Red" />
+                </Trigger>
+                <Trigger Property="ListBoxItem.IsSelected" Value="false">
+                    <Setter Property="ListBoxItem.Foreground" Value="Black" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <ListBox 
+            x:Name="listbox1" 
+            HorizontalAlignment="Center"
+            local:HoverInteractor.UseHover="True"
+            ScrollViewer.VerticalScrollBarVisibility="Visible"
+            ItemTemplate="{StaticResource ItemTemplate}" 
+            ItemContainerStyle="{StaticResource itemcontainerstyle}"
+            ItemsSource="{StaticResource MyDataSource}">
+        </ListBox>
+    </Grid>
+</Window>
